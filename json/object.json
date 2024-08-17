@@ -1,0 +1,22 @@
+[
+    {
+        "score": 0.9962189793586731,
+        "label": "person",
+        "box": {
+            "xmin": 197,
+            "ymin": 210,
+            "xmax": 488,
+            "ymax": 477
+        }
+    },
+    {
+        "score": 0.6828230023384094,
+        "label": "person",
+        "box": {
+            "xmin": 194,
+            "ymin": 453,
+            "xmax": 224,
+            "ymax": 480
+        }
+    }
+]
