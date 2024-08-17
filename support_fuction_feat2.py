@@ -4,10 +4,6 @@ import speech_recognition as sr
 import pyttsx3
 import cv2
 
-
-
-
-
 def record_audio(filename, duration=5, sample_rate=44100, channels=2, chunk=1024):
     audio = pyaudio.PyAudio()
     
