@@ -14,6 +14,7 @@ import tempfile
 import sys
 import io
 import time
+import pygame
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
@@ -82,7 +83,7 @@ def save_image(frame, folder="image"):
     cv2.imwrite(image_path, frame)
     return image_path
 
-def text_to_speech(text, lang= "vi"):
+def text_to_speech(text, lang="vi"):
     if not text:
         print("No text provided for text-to-speech.")
         return
@@ -93,9 +94,18 @@ def text_to_speech(text, lang= "vi"):
     tts = gTTS(text=text, lang=lang)
     tts.save(temp_filename)
     
-    playsound(temp_filename)
-    
-    os.remove(temp_filename)
+    try:
+        pygame.mixer.init()
+        pygame.mixer.music.load(temp_filename)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+    except Exception as e:
+        print(f"Error playing sound: {e}")
+    finally:
+        pygame.mixer.quit()
+        os.remove(temp_filename)
+
 
 def display_image(image_path, window_name="Detected Image"):
     image = cv2.imread(image_path)
@@ -203,9 +213,11 @@ def listen_and_recognize(recognizer, microphone, timeout=10):
             audio = recognizer.listen(source, timeout=timeout, phrase_time_limit=None)
         try:
             print("Đang nhận diện...")
-            return recognizer.recognize_google(audio, language="vi-VN").lower(), "vi"
+            text = recognizer.recognize_google(audio, language="vi-VN").lower()
+            return text, "vi"
         except:
-            return recognizer.recognize_google(audio, language="en-US").lower(), "en"
+            text = recognizer.recognize_google(audio, language="en-US").lower()
+            return text, "en"
     except sr.WaitTimeoutError:
         print("Hết thời gian chờ, không nhận được âm thanh.")
         return "", ""
@@ -219,56 +231,35 @@ def listen_and_recognize(recognizer, microphone, timeout=10):
 def process_feat2():
     recognizer = sr.Recognizer()
     microphone = sr.Microphone()
-    wake_words = {
-        "vi": ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào", "ê", "ê python"],
-        "en": ["hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
-    }
+    wake_words = ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào", "ê", "ê python",
+                  "hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
     
     while True:
         print("Đang lắng nghe từ khoá đánh thức... / Listening for wake words...")
-        text, lang = listen_and_recognize(recognizer, microphone)
+        text, _ = listen_and_recognize(recognizer, microphone)
         print(f"Đã nghe / Heard: {text}")
         
-        if any(word in text for word in wake_words[lang]):
+        if any(word in text.lower() for word in wake_words):
             active = True
             while active:
-                if lang == "vi":
-                    text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", lang)
-                else:
-                    text_to_speech("How can I help you?", lang)
+                text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", "vi")
                 
-                command, lang = listen_and_recognize(recognizer, microphone, timeout=10)
+                command, _ = listen_and_recognize(recognizer, microphone, timeout=10)
                 
                 if not command:
-                    if lang == "vi":
-                        text_to_speech("Không nhận được lệnh. Tôi sẽ chờ từ khóa đánh thức mới.", lang)
-                    else:
-                        text_to_speech("No command received. I'll wait for a new wake word.", lang)
+                    text_to_speech("Không nhận được lệnh. Tôi sẽ chờ từ khóa đánh thức mới.", "vi")
                     active = False
                     continue
                 
                 print(f"Lệnh / Command: {command}")
                 
-                if lang == "vi":
-                    if any(word in command for word in ["dừng", "không có gì", "thoát", "kết thúc"]):
-                        text_to_speech("Tạm biệt! Tôi sẽ chờ từ khóa đánh thức mới.", lang)
-                        active = False
-                    elif "ảnh" in command or "hình" in command:
-                        text_to_speech("Đã chụp ảnh. Đang xử lý", lang)
-                        process_feat1()
-                    else:
-                        text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", lang)
-                elif lang == 'en':
-                    if any(word in command for word in ["stop", "nothing", "exit", "quit"]):
-                        text_to_speech("Goodbye! I'll wait for a new wake word.", lang)
-                        active = False
-                    elif "photo" in command or "picture" in command:
-                        text_to_speech("Picture taken. Processing", lang)
-                        process_feat1()
-                    else:
-                        text_to_speech("I didn't understand that command. Please try again.", lang)
-                else:
-                    text_to_speech("Đã có lỗi xảy ra", lang="vi")
+                if any(word in command.lower() for word in ["dừng", "không có gì", "thoát", "kết thúc", "stop", "nothing", "exit", "quit"]):
+                    text_to_speech("Tạm biệt! Tôi sẽ chờ từ khóa đánh thức mới.", "vi")
                     active = False
+                elif any(word in command.lower() for word in ["ảnh", "hình", "photo", "picture"]):
+                    text_to_speech("Đã chụp ảnh. Đang xử lý.", "vi")
+                    process_feat1()
+                else:
+                    text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
 
 process_feat2()
