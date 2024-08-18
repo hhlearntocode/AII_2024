@@ -1,42 +1,4 @@
-[
-    {
-        "score": 0.9887709021568298,
-        "label": "person",
-        "box": {
-            "xmin": 252,
-            "ymin": 296,
-            "xmax": 521,
-            "ymax": 478
-        }
-    },
-    {
-        "score": 0.6492176651954651,
-        "label": "chair",
-        "box": {
-            "xmin": 87,
-            "ymin": 442,
-            "xmax": 126,
-            "ymax": 480
-        }
-    },
-    {
-        "score": 0.8402143120765686,
-        "label": "chair",
-        "box": {
-            "xmin": 1,
-            "ymin": 436,
-            "xmax": 123,
-            "ymax": 480
-        }
-    },
-    {
-        "score": 0.7071520686149597,
-        "label": "cell phone",
-        "box": {
-            "xmin": 213,
-            "ymin": 189,
-            "xmax": 434,
-            "ymax": 477
-        }
-    }
-]
+{
+    "error": "Model hustvl/yolos-tiny is currently loading",
+    "estimated_time": 20.0
+}
