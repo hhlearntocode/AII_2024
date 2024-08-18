@@ -3,5 +3,13 @@ opencv-python
 pyttsx3
 pillow
 ffmpeg
-transformer
+transformers
 SpeechRecognition
+googletrans==3.1.0a0
+pyvi==0.1.1
+translate==3.6.1
+faiss-cpu==1.7.2
+tqdm==4.64.1
+matplotlib==3.6.0
+langdetect==1.0.9
+#pip install git+https://github.com/openai/CLIP.git

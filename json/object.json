@@ -1,22 +1,42 @@
 [
     {
-        "score": 0.9962189793586731,
+        "score": 0.5518525838851929,
+        "label": "bed",
+        "box": {
+            "xmin": 545,
+            "ymin": 322,
+            "xmax": 603,
+            "ymax": 439
+        }
+    },
+    {
+        "score": 0.9986255168914795,
         "label": "person",
         "box": {
-            "xmin": 197,
-            "ymin": 210,
-            "xmax": 488,
+            "xmin": 148,
+            "ymin": 3,
+            "xmax": 605,
+            "ymax": 476
+        }
+    },
+    {
+        "score": 0.5931593775749207,
+        "label": "person",
+        "box": {
+            "xmin": 590,
+            "ymin": 194,
+            "xmax": 640,
             "ymax": 477
         }
     },
     {
-        "score": 0.6828230023384094,
-        "label": "person",
+        "score": 0.5392957925796509,
+        "label": "bed",
         "box": {
-            "xmin": 194,
-            "ymin": 453,
-            "xmax": 224,
-            "ymax": 480
+            "xmin": 490,
+            "ymin": 306,
+            "xmax": 609,
+            "ymax": 443
         }
     }
 ]
