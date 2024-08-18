@@ -224,56 +224,51 @@ def process_feat2():
         "en": ["hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
     }
     
-    print("Đang lắng nghe từ khoá đánh thức... / Listening for wake words...")
     while True:
+        print("Đang lắng nghe từ khoá đánh thức... / Listening for wake words...")
         text, lang = listen_and_recognize(recognizer, microphone)
         print(f"Đã nghe / Heard: {text}")
         
         if any(word in text for word in wake_words[lang]):
-            if lang == "vi":
-                text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", lang)
-            else:
-                text_to_speech("How can I help you?", lang)
-            
-            start_time = time.time()
-            command, lang = listen_and_recognize(recognizer, microphone)
-            end_time = time.time()
-            
-            if end_time - start_time > 10:
+            active = True
+            while active:
                 if lang == "vi":
-                    text_to_speech("Không nhận được lệnh. Tạm biệt!", lang)
+                    text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", lang)
                 else:
-                    text_to_speech("No command received. Goodbye!", lang)
-                break
-            
-            print(f"Lệnh / Command: {command}")
-            
-            if lang == "vi":
-                if any(word in command for word in ["dừng", "không có gì", "thoát", "kết thúc"]):
-                    response = "Tạm biệt!"
-                    print(f"Chuẩn bị đọc: {response}")
-                    text_to_speech(response, lang)
-                    break
-                elif "ảnh" in command or "hình" in command:
-                    response = "Đã chụp ảnh. Đang xử lý"
-                    print(f"Chuẩn bị đọc: {response}")
-                    text_to_speech(response, lang)
-                    process_feat1()
+                    text_to_speech("How can I help you?", lang)
+                
+                command, lang = listen_and_recognize(recognizer, microphone, timeout=10)
+                
+                if not command:
+                    if lang == "vi":
+                        text_to_speech("Không nhận được lệnh. Tôi sẽ chờ từ khóa đánh thức mới.", lang)
+                    else:
+                        text_to_speech("No command received. I'll wait for a new wake word.", lang)
+                    active = False
+                    continue
+                
+                print(f"Lệnh / Command: {command}")
+                
+                if lang == "vi":
+                    if any(word in command for word in ["dừng", "không có gì", "thoát", "kết thúc"]):
+                        text_to_speech("Tạm biệt! Tôi sẽ chờ từ khóa đánh thức mới.", lang)
+                        active = False
+                    elif "ảnh" in command or "hình" in command:
+                        text_to_speech("Đã chụp ảnh. Đang xử lý", lang)
+                        process_feat1()
+                    else:
+                        text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", lang)
+                elif lang == 'en':
+                    if any(word in command for word in ["stop", "nothing", "exit", "quit"]):
+                        text_to_speech("Goodbye! I'll wait for a new wake word.", lang)
+                        active = False
+                    elif "photo" in command or "picture" in command:
+                        text_to_speech("Picture taken. Processing", lang)
+                        process_feat1()
+                    else:
+                        text_to_speech("I didn't understand that command. Please try again.", lang)
                 else:
-                    response = "Tôi không hiểu lệnh đó. Vui lòng thử lại."
-                    print(f"Chuẩn bị đọc: {response}")
-                    text_to_speech(response, lang)
-            elif lang == 'en':
-                if any(word in command for word in ["stop", "nothing", "exit", "quit"]):
-                    text_to_speech("Goodbye!", lang)
-                    break
-                elif "photo" in command or "picture" in command:
-                    text_to_speech("Picture taken. Processing", lang)
-                    result = process_feat1()
-                    text_to_speech(result, lang)
-                else:
-                    text_to_speech("I didn't understand that command. Please try again.", lang)
-            else:
-                text_to_speech("Đã có lỗi xảy ra", lang="vi")
+                    text_to_speech("Đã có lỗi xảy ra", lang="vi")
+                    active = False
 
 process_feat2()
