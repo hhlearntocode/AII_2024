@@ -1,51 +1,31 @@
 [
     {
-        "score": 0.8722307085990906,
+        "score": 0.9920123219490051,
         "label": "person",
         "box": {
-            "xmin": 129,
-            "ymin": 169,
-            "xmax": 638,
+            "xmin": 190,
+            "ymin": 252,
+            "xmax": 450,
             "ymax": 478
         }
     },
     {
-        "score": 0.8106314539909363,
+        "score": 0.6085776090621948,
         "label": "person",
         "box": {
-            "xmin": 141,
-            "ymin": 167,
-            "xmax": 625,
+            "xmin": 29,
+            "ymin": 244,
+            "xmax": 482,
             "ymax": 478
         }
     },
     {
-        "score": 0.9478573799133301,
+        "score": 0.6814485192298889,
         "label": "person",
         "box": {
-            "xmin": 135,
-            "ymin": 169,
-            "xmax": 487,
-            "ymax": 477
-        }
-    },
-    {
-        "score": 0.5122472643852234,
-        "label": "person",
-        "box": {
-            "xmin": 7,
-            "ymin": 158,
-            "xmax": 547,
-            "ymax": 478
-        }
-    },
-    {
-        "score": 0.9556578397750854,
-        "label": "person",
-        "box": {
-            "xmin": 0,
-            "ymin": 172,
-            "xmax": 639,
+            "xmin": 52,
+            "ymin": 243,
+            "xmax": 565,
             "ymax": 478
         }
     }

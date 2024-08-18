@@ -82,7 +82,7 @@ def save_image(frame, folder="image"):
     cv2.imwrite(image_path, frame)
     return image_path
 
-def text_to_speech(text, lang='vi'):
+def text_to_speech(text, lang= "vi"):
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as fp:
         temp_filename = fp.name
     
@@ -230,15 +230,21 @@ def process_feat2():
             
             if lang == "vi":
                 if any(word in command for word in ["dừng", "không có gì", "thoát", "kết thúc"]):
-                    text_to_speech("Tạm biệt!", lang)
+                    response = "Tạm biệt!"
+                    print(f"Chuẩn bị đọc: {response}")
+                    text_to_speech(response, lang)
                     break
                 elif "ảnh" in command or "hình" in command:
-                    text_to_speech("Đã chụp ảnh. Đang xử lý", lang)
+                    response = "Đã chụp ảnh. Đang xử lý"
+                    print(f"Chuẩn bị đọc: {response}")
+                    text_to_speech(response, lang)
                     result = process_feat1()
                     text_to_speech(result, lang)
                 else:
-                    text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", lang)
-            else:
+                    response = "Tôi không hiểu lệnh đó. Vui lòng thử lại."
+                    print(f"Chuẩn bị đọc: {response}")
+                    text_to_speech(response, lang)
+            elif lang == 'en':
                 if any(word in command for word in ["stop", "nothing", "exit", "quit"]):
                     text_to_speech("Goodbye!", lang)
                     break
@@ -248,5 +254,7 @@ def process_feat2():
                     text_to_speech(result, lang)
                 else:
                     text_to_speech("I didn't understand that command. Please try again.", lang)
+            else:
+                text_to_speech("Đã có lỗi xảy ra", lang="vi")
 
 process_feat2()
