@@ -1,12 +1,52 @@
 [
     {
-        "score": 0.9813646674156189,
+        "score": 0.8722307085990906,
+        "label": "person",
+        "box": {
+            "xmin": 129,
+            "ymin": 169,
+            "xmax": 638,
+            "ymax": 478
+        }
+    },
+    {
+        "score": 0.8106314539909363,
+        "label": "person",
+        "box": {
+            "xmin": 141,
+            "ymin": 167,
+            "xmax": 625,
+            "ymax": 478
+        }
+    },
+    {
+        "score": 0.9478573799133301,
+        "label": "person",
+        "box": {
+            "xmin": 135,
+            "ymin": 169,
+            "xmax": 487,
+            "ymax": 477
+        }
+    },
+    {
+        "score": 0.5122472643852234,
+        "label": "person",
+        "box": {
+            "xmin": 7,
+            "ymin": 158,
+            "xmax": 547,
+            "ymax": 478
+        }
+    },
+    {
+        "score": 0.9556578397750854,
         "label": "person",
         "box": {
             "xmin": 0,
-            "ymin": 59,
-            "xmax": 544,
-            "ymax": 479
+            "ymin": 172,
+            "xmax": 639,
+            "ymax": 478
         }
     }
 ]

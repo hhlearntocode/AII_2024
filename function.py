@@ -129,7 +129,7 @@ def generate_image_description(json_folder="json"):
         else:
             objects_text = object_descriptions[0] if object_descriptions else ""
 
-        paragraph = f"Trong hình có {objects_text}. "
+        paragraph = f"Tôi tin rằng trong hình có {objects_text}. "
     except (IOError, ValueError, KeyError) as e:
         paragraph = "Đã có lỗi xảy ra trong quá trình nhận diện vật thể. "
     
@@ -210,7 +210,7 @@ def process_feat2():
     recognizer = sr.Recognizer()
     microphone = sr.Microphone()
     wake_words = {
-        "vi": ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào"],
+        "vi": ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào", "ê", "ê python"],
         "en": ["hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
     }
     
