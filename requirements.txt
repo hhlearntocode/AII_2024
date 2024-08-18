@@ -7,3 +7,10 @@ SpeechRecognition
 deep-translator
 gTTS
 sounddevice
+googletrans==3.1.0a0
+translate==3.6.1
+faiss-cpu==1.7.2
+langdetect==1.0.9
+sentence_transformers==2.2.2
+#pip install git+https://github.com/openai/CLIP.git
+

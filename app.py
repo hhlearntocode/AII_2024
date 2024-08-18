@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-from function import process_feat1, process_feat2
+from function import process_feat1
 from retrieval_func import MyFaiss
 import os
 st.set_page_config(layout="wide")
@@ -20,11 +20,14 @@ Retrieval_input = st.sidebar.text_input('Moi nhap truy van: ')
 
 if Capture_image:
     st.write('Image is being taken')
-    process_feat1()
+    describing, text = process_feat1()
+    st.write(describing)
+    st.write(text)
+    
     
 elif Assistant:
     st.write('Assistant is listening.........')
-    process_feat2()
+    #process_feat2()
     
 elif Retrieval and Retrieval_input:
     st.write(Retrieval_input)
