@@ -4,7 +4,6 @@ import os
 import subprocess
 import json as js
 import requests
-# import pyttsx3
 import pyaudio
 import speech_recognition as sr
 import wave
@@ -14,6 +13,7 @@ from playsound import playsound
 import tempfile
 import sys
 import io
+import time
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
@@ -83,6 +83,10 @@ def save_image(frame, folder="image"):
     return image_path
 
 def text_to_speech(text, lang= "vi"):
+    if not text:
+        print("No text provided for text-to-speech.")
+        return
+    
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as fp:
         temp_filename = fp.name
     
@@ -225,7 +229,17 @@ def process_feat2():
             else:
                 text_to_speech("How can I help you?", lang)
             
+            start_time = time.time()
             command, lang = listen_and_recognize(recognizer, microphone)
+            end_time = time.time()
+            
+            if end_time - start_time > 10:
+                if lang == "vi":
+                    text_to_speech("Không nhận được lệnh. Tạm biệt!", lang)
+                else:
+                    text_to_speech("No command received. Goodbye!", lang)
+                break
+            
             print(f"Lệnh / Command: {command}")
             
             if lang == "vi":
