@@ -231,7 +231,7 @@ def process_feat2():
         
         if any(word in text for word in wake_words[lang]):
             if lang == "vi":
-                text_to_speech("Tôi có thể giúp gì cho bạn?", lang)
+                text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", lang)
             else:
                 text_to_speech("How can I help you?", lang)
             
@@ -258,8 +258,7 @@ def process_feat2():
                     response = "Đã chụp ảnh. Đang xử lý"
                     print(f"Chuẩn bị đọc: {response}")
                     text_to_speech(response, lang)
-                    result = process_feat1()
-                    text_to_speech(result, lang)
+                    process_feat1()
                 else:
                     response = "Tôi không hiểu lệnh đó. Vui lòng thử lại."
                     print(f"Chuẩn bị đọc: {response}")
