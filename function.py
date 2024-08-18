@@ -77,9 +77,16 @@ def capture_image():
     return frame
 
 def save_image(frame, folder="image"):
+    with open('count.txt', 'r') as fr:
+        count = int(fr.readline())
+    with open('count.txt', 'w') as fr:
+        fr.write(str(count + 1))
+    
     if not os.path.exists(folder):
         os.makedirs(folder)
     image_path = os.path.join(folder, "captured_image.png")
+    cv2.imwrite(image_path, frame)
+    image_path = os.path.join('database\Keyframes', f'image_{count}.jpg')
     cv2.imwrite(image_path, frame)
     return image_path
 
