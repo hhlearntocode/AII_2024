@@ -14,7 +14,8 @@ import tempfile
 import sys
 import io
 import time
-import pygame
+import sounddevice as sd
+import soundfile as sf
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
@@ -102,15 +103,12 @@ def text_to_speech(text, lang="vi"):
     tts.save(temp_filename)
     
     try:
-        pygame.mixer.init()
-        pygame.mixer.music.load(temp_filename)
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
+        data, fs = sf.read(temp_filename, dtype='float32')
+        sd.play(data, fs)
+        sd.wait()
     except Exception as e:
         print(f"Error playing sound: {e}")
     finally:
-        pygame.mixer.quit()
         os.remove(temp_filename)
 
 

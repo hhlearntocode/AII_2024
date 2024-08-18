@@ -6,4 +6,4 @@ transformers
 SpeechRecognition
 deep-translator
 gTTS
-playsound
+sounddevice
