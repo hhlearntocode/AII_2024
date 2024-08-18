@@ -195,16 +195,22 @@ def record_audio(filename, duration=5, sample_rate=44100, channels=2, chunk=1024
         wf.writeframes(b''.join(frames))
 
 
-def listen_and_recognize(recognizer, microphone):
+def listen_and_recognize(recognizer, microphone, timeout=10):
     try:
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source, timeout=5)
+            print("Đang lắng nghe...")
+            recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            audio = recognizer.listen(source, timeout=timeout, phrase_time_limit=None)
         try:
+            print("Đang nhận diện...")
             return recognizer.recognize_google(audio, language="vi-VN").lower(), "vi"
         except:
             return recognizer.recognize_google(audio, language="en-US").lower(), "en"
+    except sr.WaitTimeoutError:
+        print("Hết thời gian chờ, không nhận được âm thanh.")
+        return "", ""
     except sr.UnknownValueError:
+        print("Không nhận diện được giọng nói.")
         return "", ""
     except Exception as e:
         print(f"Lỗi/Error: {e}")
