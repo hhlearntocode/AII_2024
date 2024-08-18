@@ -4,11 +4,18 @@ import os
 import subprocess
 import json as js
 import requests
-import pyttsx3
+# import pyttsx3
 import pyaudio
 import speech_recognition as sr
 import wave
+from deep_translator import GoogleTranslator
+from gtts import gTTS
+from playsound import playsound
+import tempfile
+import sys
+import io
 
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
 ######################### MODEL USED ############################################
 ### OD
@@ -75,10 +82,16 @@ def save_image(frame, folder="image"):
     cv2.imwrite(image_path, frame)
     return image_path
 
-def text_to_speech(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+def text_to_speech(text, lang='vi'):
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as fp:
+        temp_filename = fp.name
+    
+    tts = gTTS(text=text, lang=lang)
+    tts.save(temp_filename)
+    
+    playsound(temp_filename)
+    
+    os.remove(temp_filename)
 
 def display_image(image_path, window_name="Detected Image"):
     image = cv2.imread(image_path)
@@ -94,26 +107,42 @@ def generate_image_description(json_folder="json"):
     caption_file = os.path.join(json_folder, "caption.json")
     object_file = os.path.join(json_folder, "object.json")
 
-    caption_data = read_json_file(caption_file)
-    object_data = read_json_file(object_file)
+    translator = GoogleTranslator(source='auto', target='vi')
 
-    object_counts = {}
-    for obj in object_data:
-        label = obj['label']
-        object_counts[label] = object_counts.get(label, 0) + 1
+    try:
+        caption_data = read_json_file(caption_file)
+        object_data = read_json_file(object_file)
 
-    object_descriptions = [f"{count} {obj}{'s' if count > 1 else ''}" for obj, count in object_counts.items()]
+        object_counts = {}
+        for obj in object_data:
+            if isinstance(obj, dict) and 'label' in obj:
+                label = obj['label']
+                translated_label = translator.translate(label)
+                object_counts[translated_label] = object_counts.get(translated_label, 0) + 1
+            else:
+                raise ValueError("Dữ liệu đối tượng không có 'label' hoặc không phải là dictionary")
 
-    if len(object_descriptions) > 1:
-        objects_text = ", ".join(object_descriptions[:-1]) + f", and {object_descriptions[-1]}"
+        object_descriptions = [f"{count} {obj}" for obj, count in object_counts.items()]
+
+        if len(object_descriptions) > 1:
+            objects_text = ", ".join(object_descriptions[:-1]) + f" và {object_descriptions[-1]}"
+        else:
+            objects_text = object_descriptions[0] if object_descriptions else ""
+
+        paragraph = f"Trong hình có {objects_text}. "
+    except (IOError, ValueError, KeyError) as e:
+        paragraph = "Đã có lỗi xảy ra trong quá trình nhận diện vật thể. "
+    
+    if caption_data and isinstance(caption_data, list) and 'generated_text' in caption_data[0]:
+        english_caption = caption_data[0]['generated_text']
+        vietnamese_caption = translator.translate(english_caption)
+        paragraph += vietnamese_caption.capitalize() + "."
     else:
-        objects_text = object_descriptions[0] if object_descriptions else ""
-
-    paragraph = f"In the picture, there are {objects_text}. "
-    if caption_data and 'generated_text' in caption_data[0]:
-        paragraph += caption_data[0]['generated_text'].capitalize() + "."
+        paragraph += "Không thể tạo mô tả cho hình ảnh."
 
     return paragraph
+
+
 
 def process_feat1():
         try:
@@ -126,8 +155,7 @@ def process_feat1():
             text_to_speech(par)
             print(par)
         except Exception as e:
-             print(f"An error occurred: {str(e)}")
-
+            print(f"An error occurred: {str(e)}")
 
 #################################################################################################
 #       FEATURE 2: INPUT COMMAND, GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
@@ -168,41 +196,57 @@ def listen_and_recognize(recognizer, microphone):
         with microphone as source:
             recognizer.adjust_for_ambient_noise(source)
             audio = recognizer.listen(source, timeout=5)
-        return recognizer.recognize_google(audio).lower()
+        try:
+            return recognizer.recognize_google(audio, language="vi-VN").lower(), "vi"
+        except:
+            return recognizer.recognize_google(audio, language="en-US").lower(), "en"
     except sr.UnknownValueError:
-        return ""
+        return "", ""
     except Exception as e:
-        print(f"Error: {e}")
-        return ""
+        print(f"Lỗi/Error: {e}")
+        return "", ""
 
 def process_feat2():
     recognizer = sr.Recognizer()
     microphone = sr.Microphone()
-    engine = pyttsx3.init()
-    wake_words = ["hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
+    wake_words = {
+        "vi": ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào"],
+        "en": ["hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
+    }
     
-    print("Listening for wake words...")
+    print("Đang lắng nghe từ khoá đánh thức... / Listening for wake words...")
     while True:
-        text = listen_and_recognize(recognizer, microphone)
-        print(f"Heard: {text}")
+        text, lang = listen_and_recognize(recognizer, microphone)
+        print(f"Đã nghe / Heard: {text}")
         
-        if any(word in text for word in wake_words):
-            engine.say("How can I help you?")
-            engine.runAndWait()
-            
-            command = listen_and_recognize(recognizer, microphone)
-            print(f"Command: {command}")
-            
-            if command in ["stop", "nothing", "exit", "quit"]:
-                engine.say("Goodbye!")
-                engine.runAndWait()
-                break
-            elif "photo" in command or "picture" in command:
-                result = process_feat1()
-                engine.say(result)
-                engine.runAndWait()
+        if any(word in text for word in wake_words[lang]):
+            if lang == "vi":
+                text_to_speech("Tôi có thể giúp gì cho bạn?", lang)
             else:
-                engine.say("I didn't understand that command. Please try again.")
-                engine.runAndWait()
+                text_to_speech("How can I help you?", lang)
+            
+            command, lang = listen_and_recognize(recognizer, microphone)
+            print(f"Lệnh / Command: {command}")
+            
+            if lang == "vi":
+                if any(word in command for word in ["dừng", "không có gì", "thoát", "kết thúc"]):
+                    text_to_speech("Tạm biệt!", lang)
+                    break
+                elif "ảnh" in command or "hình" in command:
+                    text_to_speech("Đã chụp ảnh. Đang xử lý", lang)
+                    result = process_feat1()
+                    text_to_speech(result, lang)
+                else:
+                    text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", lang)
+            else:
+                if any(word in command for word in ["stop", "nothing", "exit", "quit"]):
+                    text_to_speech("Goodbye!", lang)
+                    break
+                elif "photo" in command or "picture" in command:
+                    text_to_speech("Picture taken. Processing", lang)
+                    result = process_feat1()
+                    text_to_speech(result, lang)
+                else:
+                    text_to_speech("I didn't understand that command. Please try again.", lang)
 
 process_feat2()

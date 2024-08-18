@@ -1,7 +1,9 @@
 pyaudio
 opencv-python
-pyttsx3
 pillow
 ffmpeg
-transformer
+transformers
 SpeechRecognition
+deep-translator
+gTTS
+playsound
