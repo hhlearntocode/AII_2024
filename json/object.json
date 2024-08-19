@@ -1,4 +1,62 @@
-{
-    "error": "Model hustvl/yolos-tiny is currently loading",
-    "estimated_time": 20.0
-}
+[
+    {
+        "score": 0.749862790107727,
+        "label": "bed",
+        "box": {
+            "xmin": 534,
+            "ymin": 336,
+            "xmax": 639,
+            "ymax": 478
+        }
+    },
+    {
+        "score": 0.7307301163673401,
+        "label": "person",
+        "box": {
+            "xmin": 264,
+            "ymin": 0,
+            "xmax": 478,
+            "ymax": 56
+        }
+    },
+    {
+        "score": 0.7225646376609802,
+        "label": "hot dog",
+        "box": {
+            "xmin": 372,
+            "ymin": 416,
+            "xmax": 612,
+            "ymax": 479
+        }
+    },
+    {
+        "score": 0.8854847550392151,
+        "label": "book",
+        "box": {
+            "xmin": 125,
+            "ymin": 50,
+            "xmax": 552,
+            "ymax": 478
+        }
+    },
+    {
+        "score": 0.6913921236991882,
+        "label": "person",
+        "box": {
+            "xmin": 20,
+            "ymin": 333,
+            "xmax": 638,
+            "ymax": 480
+        }
+    },
+    {
+        "score": 0.9753824472427368,
+        "label": "person",
+        "box": {
+            "xmin": 370,
+            "ymin": 321,
+            "xmax": 624,
+            "ymax": 478
+        }
+    }
+]

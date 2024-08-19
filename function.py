@@ -1,7 +1,5 @@
-from PIL import ImageTk, Image
 import cv2
 import os
-import subprocess
 import json as js
 import requests
 import pyaudio
@@ -13,10 +11,11 @@ from playsound import playsound
 import tempfile
 import sys
 import io
-import time
 import sounddevice as sd
 import soundfile as sf
 import easyocr
+from retrieval_func import Translation
+from langdetect import detect
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
@@ -79,6 +78,9 @@ def get_ocr_text(filename):
         text_in_frame = text_in_frame + ' ' + text
     if text_in_frame == "":
         text_in_frame = " "
+    translater = Translation(to_lang='vi')
+    if detect(text_in_frame) == 'vi':
+      text_in_frame = translater(text_in_frame)
     return text_in_frame
 ##################################################################################
 #       FEATURE 1: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
@@ -185,6 +187,7 @@ def process_feat1():
             get_obj_json(image_path)
             get_cap_json(image_path)
             text = get_ocr_text(image_path)
+            print(text)
             par = generate_image_description()
             text_to_speech(par)
             print(par)
