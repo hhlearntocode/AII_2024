@@ -13,5 +13,6 @@ faiss-cpu==1.7.2
 langdetect==1.0.9
 sentence_transformers==2.2.2
 easyocr
+streamlit
 #pip install git+https://github.com/openai/CLIP.git
 
