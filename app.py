@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from function import process_feat1
+from create_database import File4Faiss
 from retrieval_func import MyFaiss
 import os
 st.set_page_config(layout="wide")
@@ -16,6 +17,7 @@ Capture_image = st.sidebar.button('Capture_image')
 Assistant = st.sidebar.button('Assistant')
 Retrieval = st.sidebar.button('Retrieval')
 Retrieval_input = st.sidebar.text_input('Moi nhap truy van: ')
+database = st.sidebar.button('Update database')
 ###########################################
 
 if Capture_image:
@@ -39,3 +41,9 @@ elif Retrieval and Retrieval_input:
         with cols[i % num_cols]:
             st.image(img, caption=f"{os.path.basename(image_path)}", use_column_width=True)
         
+
+elif database:
+    create_file = File4Faiss('database')
+    create_file.write_json_file(json_path='database')
+    create_file.write_bin_file(bin_path='database', json_path='database\keyframes_id.json', method='cosine')
+    st.write('Successfully !!!')

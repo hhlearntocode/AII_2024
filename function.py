@@ -16,7 +16,7 @@ import io
 import time
 import sounddevice as sd
 import soundfile as sf
-#import easyocr
+import easyocr
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
@@ -68,18 +68,18 @@ def get_det_json(filename):
         js.dump(audio, fr,indent=4)
 
 
-# ### Text extraction
-# def get_ocr_text(filename):
-#     reader = easyocr.Reader(['vi', 'en'])
-#     result = reader.readtext(filename)
-#     text_in_frame = ""
-#     for image_result in result:
-#         if isinstance(image_result, (tuple, list)) and len(image_result) == 3:
-#             bbox, text, prob = image_result
-#         text_in_frame = text_in_frame + ' ' + text
-#     if text_in_frame == "":
-#         text_in_frame = " "
-#     return text_in_frame
+### Text extraction
+def get_ocr_text(filename):
+    reader = easyocr.Reader(['vi', 'en'])
+    result = reader.readtext(filename)
+    text_in_frame = ""
+    for image_result in result:
+        if isinstance(image_result, (tuple, list)) and len(image_result) == 3:
+            bbox, text, prob = image_result
+        text_in_frame = text_in_frame + ' ' + text
+    if text_in_frame == "":
+        text_in_frame = " "
+    return text_in_frame
 ##################################################################################
 #       FEATURE 1: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
 ##################################################################################
@@ -283,4 +283,3 @@ def process_feat2():
                 else:
                     text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
 
-process_feat1()
