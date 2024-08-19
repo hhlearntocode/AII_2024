@@ -184,13 +184,13 @@ def process_feat1():
             print(f"Image saved in {image_path}")
             get_obj_json(image_path)
             get_cap_json(image_path)
-            #text = get_ocr_text(image_path)
+            text = get_ocr_text(image_path)
             par = generate_image_description()
             text_to_speech(par)
             print(par)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
-        return par#, text
+        return par, text
 
 #################################################################################################
 #       FEATURE 2: INPUT COMMAND, GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
