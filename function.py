@@ -16,13 +16,13 @@ import io
 import time
 import sounddevice as sd
 import soundfile as sf
-import easyocr
+#import easyocr
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
 ######################### MODEL USED ############################################
 ### OD
-OD_URL = "https://api-inference.huggingface.co/models/hustvl/yolos-tiny"
+OD_URL = "https://api-inference.huggingface.co/models/facebook/detr-resnet-50"
 
 def get_object(filename):
     with open(filename, "rb") as f:
@@ -68,18 +68,18 @@ def get_det_json(filename):
         js.dump(audio, fr,indent=4)
 
 
-### OCR extraction
-def get_ocr_text(filename):
-    reader = easyocr.Reader(['vi', 'en'])
-    result = reader.readtext(filename)
-    text_in_frame = ""
-    for image_result in result:
-        if isinstance(image_result, (tuple, list)) and len(image_result) == 3:
-            bbox, text, prob = image_result
-        text_in_frame = text_in_frame + ' ' + text
-    if text_in_frame == "":
-        text_in_frame = " "
-    return text_in_frame
+# ### Text extraction
+# def get_ocr_text(filename):
+#     reader = easyocr.Reader(['vi', 'en'])
+#     result = reader.readtext(filename)
+#     text_in_frame = ""
+#     for image_result in result:
+#         if isinstance(image_result, (tuple, list)) and len(image_result) == 3:
+#             bbox, text, prob = image_result
+#         text_in_frame = text_in_frame + ' ' + text
+#     if text_in_frame == "":
+#         text_in_frame = " "
+#     return text_in_frame
 ##################################################################################
 #       FEATURE 1: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
 ##################################################################################
@@ -184,13 +184,13 @@ def process_feat1():
             print(f"Image saved in {image_path}")
             get_obj_json(image_path)
             get_cap_json(image_path)
-            text = get_ocr_text(image_path)
+            #text = get_ocr_text(image_path)
             par = generate_image_description()
             text_to_speech(par)
             print(par)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
-        return par, text
+        return par#, text
 
 #################################################################################################
 #       FEATURE 2: INPUT COMMAND, GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
@@ -283,3 +283,4 @@ def process_feat2():
                 else:
                     text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
 
+process_feat1()
