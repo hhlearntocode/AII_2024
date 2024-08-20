@@ -19,7 +19,7 @@ import google.generativeai as genai
 
 
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
 ######################### MODEL USED ############################################
 ### OD
@@ -97,7 +97,7 @@ def get_ocr_text(filename):
         text_in_frame = text_in_frame + ' ' + text
     if text_in_frame == "":
         text_in_frame = " "
-    response = model.generate_content(f"Hãy giúp tôi hoàn thiện đoạn text sau với những từ chưa được xác định do sai sót từ model OCR: {text_in_frame}")
+    response = model.generate_content(f"Hãy giúp tôi dự đoán đoạn text sau với những từ chưa được xác định do sai sót từ model OCR: {text_in_frame}")
     return response.text
 ##################################################################################
 #       FEATURE 1: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
@@ -211,7 +211,18 @@ def process_feat1():
         except Exception as e:
             print(f"An error occurred: {str(e)}")
         return par, text
-
+def process_feat1_image(frame):
+    try:
+        image_path = save_image(frame)
+        print(f"Image saved in {image_path}")
+        get_obj_json(image_path)
+        get_cap_json(image_path)
+        text = get_ocr_text(image_path)
+        par = generate_image_description()
+        text_to_speech(par)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+    return par, text
 #################################################################################################
 #       FEATURE 2: INPUT COMMAND, GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
 #################################################################################################
