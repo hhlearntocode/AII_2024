@@ -16,4 +16,6 @@ easyocr
 streamlit
 -q -U google-generativeai
 #pip install git+https://github.com/openai/CLIP.git
-
+deepface
+tf-keras==2.17.0
+scipy
