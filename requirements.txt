@@ -14,5 +14,6 @@ langdetect==1.0.9
 sentence_transformers==2.2.2
 easyocr
 streamlit
+-q -U google-generativeai
 #pip install git+https://github.com/openai/CLIP.git
 

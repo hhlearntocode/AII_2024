@@ -1,62 +1,32 @@
 [
     {
-        "score": 0.749862790107727,
-        "label": "bed",
-        "box": {
-            "xmin": 534,
-            "ymin": 336,
-            "xmax": 639,
-            "ymax": 478
-        }
-    },
-    {
-        "score": 0.7307301163673401,
+        "score": 0.9835349321365356,
         "label": "person",
         "box": {
-            "xmin": 264,
-            "ymin": 0,
-            "xmax": 478,
-            "ymax": 56
+            "xmin": 0,
+            "ymin": 304,
+            "xmax": 115,
+            "ymax": 476
         }
     },
     {
-        "score": 0.7225646376609802,
-        "label": "hot dog",
-        "box": {
-            "xmin": 372,
-            "ymin": 416,
-            "xmax": 612,
-            "ymax": 479
-        }
-    },
-    {
-        "score": 0.8854847550392151,
+        "score": 0.9878069758415222,
         "label": "book",
         "box": {
-            "xmin": 125,
-            "ymin": 50,
-            "xmax": 552,
-            "ymax": 478
+            "xmin": 28,
+            "ymin": 1,
+            "xmax": 577,
+            "ymax": 476
         }
     },
     {
-        "score": 0.6913921236991882,
+        "score": 0.979221522808075,
         "label": "person",
         "box": {
-            "xmin": 20,
-            "ymin": 333,
-            "xmax": 638,
-            "ymax": 480
-        }
-    },
-    {
-        "score": 0.9753824472427368,
-        "label": "person",
-        "box": {
-            "xmin": 370,
-            "ymin": 321,
-            "xmax": 624,
-            "ymax": 478
+            "xmin": 422,
+            "ymin": 307,
+            "xmax": 639,
+            "ymax": 476
         }
     }
 ]

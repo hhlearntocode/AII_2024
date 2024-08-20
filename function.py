@@ -14,8 +14,10 @@ import io
 import sounddevice as sd
 import soundfile as sf
 import easyocr
-from retrieval_func import Translation
 from langdetect import detect
+import google.generativeai as genai
+
+
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
@@ -68,6 +70,23 @@ def get_det_json(filename):
 
 
 ### Text extraction
+genai.configure(api_key='AIzaSyAN7GhFw4Aaci7MupJnB8AtzT-JfiOATTA')
+
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 64,
+  "max_output_tokens": 70,
+  "response_mime_type": "text/plain",
+}
+
+model = genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  generation_config=generation_config,
+  # safety_settings = Adjust safety settings
+  # See https://ai.google.dev/gemini-api/docs/safety-settings
+)
+
 def get_ocr_text(filename):
     reader = easyocr.Reader(['vi', 'en'])
     result = reader.readtext(filename)
@@ -78,10 +97,8 @@ def get_ocr_text(filename):
         text_in_frame = text_in_frame + ' ' + text
     if text_in_frame == "":
         text_in_frame = " "
-    translater = Translation(to_lang='vi')
-    if detect(text_in_frame) == 'vi':
-      text_in_frame = translater(text_in_frame)
-    return text_in_frame
+    response = model.generate_content(f"Hãy giúp tôi hoàn thiện đoạn text sau với những từ chưa được xác định do sai sót từ model OCR: {text_in_frame}")
+    return response.text
 ##################################################################################
 #       FEATURE 1: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING       #
 ##################################################################################
