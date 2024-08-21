@@ -286,7 +286,7 @@ def process_feat2():
     microphone = sr.Microphone()
     wake_words = ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào", "ê", "ê python",
                   "hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
-    
+    text_to_speech("Đã kích hoạt. Xin hãy bắt đầu trò chuyện", "vi")
     while True:
         print("Đang lắng nghe từ khoá đánh thức... / Listening for wake words...")
         text, _ = listen_and_recognize(recognizer, microphone)
