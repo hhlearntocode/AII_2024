@@ -5,7 +5,8 @@ from function import process_feat1, process_feat1_image
 from create_database import File4Faiss
 from retrieval_func import MyFaiss
 import os
-import cv2
+import cv2 
+from face_recognition import face_recognition
 st.set_page_config(layout="wide")
 st.title("AI-Powered Smart Glasses - Real-Time Hazard Warning and Information Accessibility for the Visually Impaired")
 
@@ -13,6 +14,7 @@ st.title("AI-Powered Smart Glasses - Real-Time Hazard Warning and Information Ac
 bin_file = 'database/faiss_cosine.bin'
 json_path = 'database/keyframes_id.json'
 cosine_faiss = MyFaiss('', bin_file, json_path)
+Face = face_recognition()
 ###########################################
 database = st.sidebar.button('Update database')
 Capture_image = st.sidebar.button('Capture_image')
@@ -54,9 +56,17 @@ if image_uploader is not None:
     image = Image.open(image_uploader)
     st.image(image, caption='Ảnh đã tải lên.', use_column_width=True)
     frame = np.array(image)
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    img_upload_process = st.button('Process')
-    if img_upload_process:
-            describing, text = process_feat1_image(frame)
-            st.write(describing)
-            st.write(text)
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  
+    describing, text = process_feat1_image(frame)
+    image_path = "image/captured_image.png"
+    label, distance = Face.find_person(image_path)
+    if distance < 0.5:
+        st.write(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
+    else:
+        name =  st.text_input('Nhap ten moi: ')
+        if name: 
+            Face.create_new_face(name, frame)
+    st.write(describing)
+    st.write(text)
+
+
