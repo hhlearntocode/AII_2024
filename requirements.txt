@@ -9,12 +9,12 @@ gTTS
 sounddevice
 googletrans==3.1.0a0
 translate==3.6.1
-faiss-cpu==1.7.2
+#faiss-cpu==1.7.2
 langdetect==1.0.9
 sentence_transformers==2.2.2
 easyocr
 streamlit
--q -U google-generativeai
+#pip install -q -U google-generativeai
 #pip install git+https://github.com/openai/CLIP.git
 deepface
 tf-keras==2.17.0

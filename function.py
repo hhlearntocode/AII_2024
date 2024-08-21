@@ -19,7 +19,7 @@ import google.generativeai as genai
 
 
 
-# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 headers = {"Authorization": "Bearer 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"}
 ######################### MODEL USED ############################################
 ### OD
@@ -211,6 +211,7 @@ def process_feat1():
         except Exception as e:
             print(f"An error occurred: {str(e)}")
         return par, text
+
 def process_feat1_image(frame):
     try:
         image_path = save_image(frame)
@@ -314,3 +315,38 @@ def process_feat2():
                 else:
                     text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
 
+##########################################################################################################
+#       FEATURE 3: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING TRANSLATED TEXT IF EXIST      #
+##########################################################################################################
+
+def post_processing_text(filename):
+    reader = easyocr.Reader(['vi', 'en', 'zh', 'es', 'ar', 'hi', 'ko', 'ja', 'th', 'lo', 'km'])
+    result = reader.readtext(filename)
+    text_in_frame = ""
+    for image_result in result:
+        if isinstance(image_result, (tuple, list)) and len(image_result) == 3:
+            bbox, text, prob = image_result
+        text_in_frame = text_in_frame + ' ' + text
+    if text_in_frame == "":
+        text_in_frame = " "
+        text_to_speech("Đầu vào không thoả mãn. Xin hãy thử lại với đầu vào chứa văn bản")
+    
+    translator = GoogleTranslator(source='auto', target='vi')
+    translated_text = translator.translate(text_in_frame)
+    
+    response = model.generate_content(f"{translated_text}")
+    return response.text
+
+
+def process_feat3():
+    try:
+        frame = capture_image()
+        image_path = save_image(frame)
+        print(f"Image saved in {image_path}")
+        text = post_processing_text(image_path)
+        text_to_speech(text)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+    return 
+
+process_feat3()
