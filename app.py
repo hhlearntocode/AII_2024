@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-from function import process_feat1, process_feat1_image
+from function import process_feat1, process_feat1_image, text_to_speech, process_feat3
 from create_database import File4Faiss
 from retrieval_func import MyFaiss
 import os
@@ -19,16 +19,29 @@ Face = face_recognition()
 database = st.sidebar.button('Update database')
 Capture_image = st.sidebar.button('Capture_image')
 Assistant = st.sidebar.button('Assistant')
+ocr = st.sidebar.button('Extract text')
 Retrieval_input = st.sidebar.text_input('Moi nhap truy van: ')
 Retrieval = st.sidebar.button('Retrieval')
 image_uploader = st.sidebar.file_uploader("Chọn một hình ảnh", type=["jpg", "jpeg", "png"])
+
 ###########################################
 
 if Capture_image:
     st.write('Image is being taken')
-    describing, text = process_feat1()
+    describing = process_feat1()
+    image_path = "image/captured_image.png"
+    image = Image.open(image_path)
+    frame = np.array(image)
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  
+    label, distance = Face.find_person(image_path)
+    if distance < 0.5:
+        st.write(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
+        text_to_speech(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
+    else:
+        name =  st.text_input('Nhap ten moi: ')
+        if name: 
+            Face.create_new_face(name, frame)
     st.write(describing)
-    st.write(text)
     
     
 elif Assistant:
@@ -47,12 +60,12 @@ elif Retrieval and Retrieval_input:
         
 
 elif database:
-    # create_file = File4Faiss('database')
-    # create_file.write_json_file(json_path='database')
-    # create_file.write_bin_file(bin_path='database', json_path='database\keyframes_id.json', method='cosine')
+    create_file = File4Faiss('database')
+    create_file.write_json_file(json_path='database')
+    create_file.write_bin_file(bin_path='database', json_path='database\keyframes_id.json', method='cosine')
     st.write('Successfully !!!')
 
-if image_uploader is not None:
+elif image_uploader is not None:
     image = Image.open(image_uploader)
     st.image(image, caption='Ảnh đã tải lên.', use_column_width=True)
     frame = np.array(image)
@@ -60,8 +73,9 @@ if image_uploader is not None:
     describing, text = process_feat1_image(frame)
     image_path = "image/captured_image.png"
     label, distance = Face.find_person(image_path)
-    if distance < 0.5:
+    if distance < 0.3:
         st.write(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
+        text_to_speech(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
     else:
         name =  st.text_input('Nhap ten moi: ')
         if name: 
@@ -70,3 +84,6 @@ if image_uploader is not None:
     st.write(text)
 
 
+elif ocr:
+    text = process_feat3()
+    st.write(text)

@@ -24,7 +24,7 @@ class face_recognition:
 
         embeddings = []
         for image in images:
-            embedding = DeepFace.represent(img_path=image, model_name="Facenet")
+            embedding = DeepFace.represent(img_path=image, model_name="Facenet", enforce_detection=False)
             embeddings.append(embedding)
         labeled_embeddings = list(zip(embeddings, labels))
         with open('database/embeddings.pkl', 'wb') as file:
@@ -48,7 +48,7 @@ class face_recognition:
     def find_person(self, image_path):
         with open('database/embeddings.pkl', 'rb') as file:
             labeled_embeddings = pickle.load(file)
-        new_embedding = DeepFace.represent(img_path=image_path, model_name="Facenet")[0]["embedding"]
+        new_embedding = DeepFace.represent(img_path=image_path, model_name="Facenet", enforce_detection=False)[0]["embedding"]
         min_dist = float('inf')
         best_label = None
         for image in labeled_embeddings:
@@ -62,3 +62,5 @@ class face_recognition:
         return best_label, min_dist
 
 
+# a = face_recognition()
+# a.create_db()
