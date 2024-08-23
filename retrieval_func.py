@@ -8,7 +8,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 import googletrans
 import translate
 from langdetect import detect
-
+from PIL import Image
 class Translation:
     def __init__(self, from_lang='vi', to_lang='en', mode='google'):
         # The class Translation is a wrapper for the two translation libraries, googletrans and translate.
@@ -43,7 +43,7 @@ class MyFaiss:
     self.index = self.load_bin_file(bin_file)
     self.id2img_fps = self.load_json_file(json_path)
     self.__device = "cuda" if torch.cuda.is_available() else "cpu"
-    self.model, preprocess = clip.load("ViT-B/32", device=self.__device)
+    self.model, self.preprocess = clip.load("ViT-B/32", device=self.__device)
     self.translater = Translation()
   def load_json_file(self, json_path: str):
       with open(json_path, 'r') as f:
@@ -69,3 +69,22 @@ class MyFaiss:
     for i in idx_image:
        image_path.append(self.id2img_fps[i])
     return image_path
+  
+  def image_warning(self, text, image_path):
+    if detect(text) == 'vi':
+      text = self.translater(text)
+    image = self.preprocess(Image.open(image_path)).unsqueeze(0).to(self.__device)
+    text = clip.tokenize([text]).to(self.__device)
+
+    # Tạo embeddings
+    with torch.no_grad():
+        image_features = self.model.encode_image(image)
+        text_features = self.model.encode_text(text)
+
+    # Chuẩn hóa embeddings
+    image_features /= image_features.norm(dim=-1, keepdim=True)
+    text_features /= text_features.norm(dim=-1, keepdim=True)
+
+    # Tính toán độ tương đồng
+    similarity = (image_features @ text_features.T).item()
+    return similarity

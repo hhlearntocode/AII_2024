@@ -342,3 +342,11 @@ def process_feat3():
         print(f"An error occurred: {str(e)}")
     return text
 
+##########################################################################################################
+#       FEATURE 3: SOME Retrieval Function                                                               #
+##########################################################################################################
+
+def process_feat4():
+    frame = capture_image()
+    image_path = save_image(frame)
+    return image_path

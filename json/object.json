@@ -1,12 +1,32 @@
 [
     {
-        "score": 0.9995396137237549,
+        "score": 0.8818542957305908,
+        "label": "motorcycle",
+        "box": {
+            "xmin": 85,
+            "ymin": 116,
+            "xmax": 295,
+            "ymax": 357
+        }
+    },
+    {
+        "score": 0.9025788903236389,
+        "label": "motorcycle",
+        "box": {
+            "xmin": 73,
+            "ymin": 109,
+            "xmax": 356,
+            "ymax": 357
+        }
+    },
+    {
+        "score": 0.9812389612197876,
         "label": "person",
         "box": {
-            "xmin": 1,
+            "xmin": 285,
             "ymin": 1,
-            "xmax": 676,
-            "ymax": 957
+            "xmax": 638,
+            "ymax": 356
         }
     }
 ]

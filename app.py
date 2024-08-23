@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-from function import process_feat1, process_feat1_image, text_to_speech, process_feat3
+from function import process_feat1, process_feat1_image, text_to_speech, process_feat3, process_feat4
 from create_database import File4Faiss
 from retrieval_func import MyFaiss
 import os
@@ -23,7 +23,8 @@ ocr = st.sidebar.button('Extract text')
 Retrieval_input = st.sidebar.text_input('Moi nhap truy van: ')
 Retrieval = st.sidebar.button('Retrieval')
 image_uploader = st.sidebar.file_uploader("Chọn một hình ảnh", type=["jpg", "jpeg", "png"])
-
+find_func = st.sidebar.text_input('Moi nhap do vat can tim kiem: ')
+find_button = st.sidebar.button('Find')
 ###########################################
 
 if Capture_image:
@@ -38,11 +39,11 @@ if Capture_image:
         st.write(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
         text_to_speech(f"Dự đoán: {label} với khoảng cách {distance:.4f}")
     else:
-        name =  st.text_input('Nhap ten moi: ')
-        if name: 
-            Face.create_new_face(name, frame)
+        # name =  st.text_input('Nhap ten moi: ')
+        # if name: 
+        #     Face.create_new_face(name, frame)
+        st.write('Unknown!!!')
     st.write(describing)
-    
     
 elif Assistant:
     st.write('Assistant is listening.........')
@@ -87,3 +88,9 @@ elif image_uploader is not None:
 elif ocr:
     text = process_feat3()
     st.write(text)
+
+elif find_func and find_button:
+    image_path = process_feat4()
+    similarity = cosine_faiss.image_warning(find_func, image_path)
+    st.write(similarity)
+        
