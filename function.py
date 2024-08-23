@@ -256,24 +256,19 @@ def record_audio(filename, duration=5, sample_rate=44100, channels=2, chunk=1024
 def listen_and_recognize(recognizer, microphone, timeout=10):
     try:
         with microphone as source:
-            print("Đang lắng nghe...")
             recognizer.adjust_for_ambient_noise(source, duration=0.5)
             audio = recognizer.listen(source, timeout=timeout, phrase_time_limit=None)
         try:
-            print("Đang nhận diện...")
             text = recognizer.recognize_google(audio, language="vi-VN").lower()
             return text, "vi"
         except:
             text = recognizer.recognize_google(audio, language="en-US").lower()
             return text, "en"
     except sr.WaitTimeoutError:
-        print("Hết thời gian chờ, không nhận được âm thanh.")
         return "", ""
     except sr.UnknownValueError:
-        print("Không nhận diện được giọng nói.")
         return "", ""
     except Exception as e:
-        print(f"Lỗi/Error: {e}")
         return "", ""
 
 def process_feat2():
@@ -282,34 +277,25 @@ def process_feat2():
     wake_words = ["này trợ lý", "ok máy tính", "xin chào python", "này python", "này", "xin chào", "ê", "ê python",
                   "hey assistant", "ok computer", "hello python", "hey python", "hey", "hello"]
     text_to_speech("Đã kích hoạt. Xin hãy bắt đầu trò chuyện", "vi")
-    while True:
-        print("Đang lắng nghe từ khoá đánh thức... / Listening for wake words...")
-        text, _ = listen_and_recognize(recognizer, microphone)
-        print(f"Đã nghe / Heard: {text}")
-        
-        if any(word in text.lower() for word in wake_words):
-            active = True
-            while active:
-                text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", "vi")
-                
-                command, _ = listen_and_recognize(recognizer, microphone, timeout=10)
-                
-                if not command:
-                    text_to_speech("Không nhận được lệnh. Tôi sẽ chờ từ khóa đánh thức mới.", "vi")
-                    active = False
-                    continue
-                
-                print(f"Lệnh / Command: {command}")
-                
-                if any(word in command.lower() for word in ["dừng", "không có gì", "thoát", "kết thúc", "stop", "nothing", "exit", "quit"]):
-                    text_to_speech("Tạm biệt! Tôi sẽ chờ từ khóa đánh thức mới.", "vi")
-                    active = False
-                elif any(word in command.lower() for word in ["ảnh", "hình", "photo", "picture"]):
-                    text_to_speech("Đã chụp ảnh. Đang xử lý.", "vi")
-                    process_feat1()
-                else:
-                    text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
-
+    text, _ = listen_and_recognize(recognizer, microphone)     
+    if any(word in text.lower() for word in wake_words):
+        active = True
+        while active:
+            text_to_speech("Xin chào, tôi có thể giúp gì cho bạn?", "vi")
+            command, _ = listen_and_recognize(recognizer, microphone, timeout=10)
+            if not command:
+                text_to_speech("Không nhận được lệnh. Tôi sẽ chờ từ khóa đánh thức mới.", "vi")
+                return
+            if any(word in command.lower() for word in ["dừng", "không có gì", "thoát", "kết thúc", "stop", "nothing", "exit", "quit"]):
+                text_to_speech("Tạm biệt! Tôi sẽ chờ từ khóa đánh thức mới.", "vi")
+                return
+            elif any(word in command.lower() for word in ["ảnh", "hình", "photo", "picture"]):
+                text_to_speech("Đã chụp ảnh. Đang xử lý.", "vi")
+                process_feat1()
+                return
+            else:
+                text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
+process_feat2()
 ##########################################################################################################
 #       FEATURE 3: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING TRANSLATED TEXT IF EXIST      #
 ##########################################################################################################
