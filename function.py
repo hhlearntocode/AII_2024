@@ -295,7 +295,7 @@ def process_feat2():
                 return
             else:
                 text_to_speech("Tôi không hiểu lệnh đó. Vui lòng thử lại.", "vi")
-process_feat2()
+
 ##########################################################################################################
 #       FEATURE 3: GET IMAGE WITH CAM AND INFER, RETURN A VOICE DESCRIBING TRANSLATED TEXT IF EXIST      #
 ##########################################################################################################
